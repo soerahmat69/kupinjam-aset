@@ -15,7 +15,9 @@ export const MAssetEdit = ({data, setcloseStatus }) => {
     e.preventDefault()
     // alert(form.)
     const formData = new FormData();
-    formData.append("assetPath", form.assetPath[0]);
+    if (form.assetPath) {
+      formData.append("assetPath", form.assetPath[0]);
+    }
     formData.append("nama_kendaraan", form.nama_kendaraan || data.nama_kendaraan);
     formData.append("plat_nomor", form.plat_nomor || data.plat_nomor);
     formData.append("km", form.km || data.km);

@@ -337,7 +337,7 @@ export const DataTable = ({get}) => {
                                   stroke-linejoin="round"
                                 />
                               </svg>
-                              {res.status === "pending" ? "Tolak":"Hapus"}
+                              {res.status === "proses" ? "Tolak":"Hapus"}
                             </li>
                           </ul>
                           {/* </div> */}

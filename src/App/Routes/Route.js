@@ -19,6 +19,7 @@ import { PageNotFound } from "../../Pages/PageNotFound";
 import { DriverDashboard, SopirDashboard } from "../../Pages/Driver.Dashboard";
 import { Keberangkatan } from "../../Pages/Driver.Keberangkatan";
 import { Exportpdf } from "../Exportpdf";
+import { ExportpdfSpj } from "../ExportSpj";
 
 const PrivateRoute = ({
   element,
@@ -218,6 +219,11 @@ export const Routes = () => {
     {
       path: "/admin/exportpdf",
       element: <Exportpdf />, 
+      
+    },
+    {
+      path: "/admin/exportspj",
+      element: <ExportpdfSpj />, 
       
     },
   ];

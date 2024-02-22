@@ -99,6 +99,7 @@ export const MPermintaan = ({ setcloseStatus }) => {
                     setformData({ ...formData, waktu_jam: selectedTime });
                   }else{
                     alert("Jam di luar jam kerja")
+                    e.target.value = ""
                   }
                 }
                 }
@@ -119,10 +120,10 @@ export const MPermintaan = ({ setcloseStatus }) => {
                   onChange={(e)=>{
                     const selectedDate = new Date(e.target.value);
                     const currentDate = new Date();
-                    if (selectedDate > currentDate) {
+                    if (selectedDate >= currentDate) {
                       setformData({...formData,waktu_tanggal:e.target.value})
                     }else{
-                      alert("Tanggal terlalu belakang")
+                      alert("Maaf, tanggal yang Anda pilih adalah tanggal di masa lalu.")
                       e.target.value = ""
                     }
                     }
@@ -140,8 +141,16 @@ export const MPermintaan = ({ setcloseStatus }) => {
                   Waktu peminjaman
                 </label>
                 <input
-                 onChange={(e)=>{setformData({...formData,waktu_pinjam:e.target.value})}}
-                  id="description"
+                     onChange={(e)=>{
+                      if(e.target.value <= 10){
+                      setformData({...formData,waktu_pinjam:e.target.value})
+                    
+                      }else{
+                        alert("Waktu kurang dari 10 hari")
+                        e.target.value= ""
+                      }
+                    }}
+                 id="description"
                   
                   required
                   type="number"

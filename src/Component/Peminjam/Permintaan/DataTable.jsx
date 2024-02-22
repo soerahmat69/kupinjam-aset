@@ -13,26 +13,8 @@ export const DataTable = () => {
   const [modalLanjut, setModalLanjut] = useState({});
   const [Datatd, setData] = useState([]);
   const dispatch = useDispatch();
-  const { PunchStatus } = useSelector((state) => state.punchh);
+  const { PunchStatus,PunchStatusSub } = useSelector((state) => state.punchh);
   const handleEditToggle = ()=>setEditToggle(!EditToggle)
-  useEffect(() => {
-    if (!PunchStatus) {
-      setData([])
-      axios
-        .get(`http://localhost:8080/peminjam/request/selesai`)
-        .then((response) => {
-          console.log("e")
-          const overa = response.data.data;
-          setData(overa);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
-    return () => {
-      dispatch(reset());
-    };
-  }, [PunchStatus]);
   useEffect(() => {
     
     axios
@@ -44,7 +26,23 @@ export const DataTable = () => {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+    if (PunchStatusSub === "DISETUJUI") {
+      axios
+        .get(`http://localhost:8080/peminjam/request/selesai`)
+        .then((response) => {
+          console.log("e")
+          const overa = response.data.data;
+          setData(overa);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+    // return () => {
+    //   dispatch(reset());
+    // };
+  }, [PunchStatusSub]);
+ 
 
 
   const toggleModalData = (id) => {
@@ -208,7 +206,7 @@ export const DataTable = () => {
                           }  top-[10px]  z-10 absolute overflow-hidden w-[100px] rounded-md shadow-lg bg-[#F0F0F0] ring-1 ring-[#252B4880] `}
                         >
                           <ul className="divide-y divide-[#252B4880]">
-                            {res.status === "pending" ? (
+                            {res.status === "proses" ? (
                               <>
                                 <li
                                 onClick={handleEditToggle}

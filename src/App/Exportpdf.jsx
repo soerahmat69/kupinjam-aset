@@ -32,17 +32,16 @@ const styles = StyleSheet.create({
   },
   tableRow: {
     flexDirection: "row",
- 
   },
   tableHead: {
     flexDirection: "row",
- 
+
     backgroundColor: "orange",
     color: "white",
   },
 
   tableCol: {
-    width: "16.66%", // Ubah lebar kolom agar dapat menampung 6 kolom dalam 1 baris
+    width: "16.66%",
     borderStyle: "solid",
     borderWidth: 1,
     borderLeftWidth: 0,
@@ -120,55 +119,68 @@ const MyDocument = ({ data }) => (
               <Text>BBM</Text>
             </View>
           </View>
-          {data.map((res)=>{
-            return(
+          {data.map((res) => {
+            return (
               <>
-                  <View key={res.nama} style={styles.tableRow}>
-            <View style={styles.tableCol}>
-              <Text>{res.peminjam[0].username}</Text>
-            </View>
-            <View
-              style={{
-                width: "16.66%",
-                borderStyle: "solid",
-                borderWidth: 1,
-                borderLeftWidth: 0,
-                borderTopWidth: 0,
-                padding: 5,
-                flexWrap: "nowrap",
-              }}
-            >
-              <Text style={{ flexWrap: "nowrap", fontSize: 10 }}>
-                PT: {res.permintaan[0].waktu_tanggal}
-              </Text>
-              <Text style={{ flexWrap: "nowrap", fontSize: 10 }}>
-                PJ: {res.permintaan[0].waktu_jam}
-              </Text>
-              <Text style={{ flexWrap: "nowrap", fontSize: 10 }}>
-                KT: {res.waktu_tanggal_kembali}
-              </Text>
-              <Text style={{ flexWrap: "nowrap", fontSize: 10 }}>
-                KJ: {res.jam_kembali}
-              </Text>
-            </View>
-            <View style={styles.tableCol}>
-            {res.permintaan[0].keperluan}
-            </View>
-            <View style={styles.tableCol}>
-            <Text>{res.peminjam[0].username}</Text>
-            </View>
-            <View style={styles.tableCol}>
-            <Text>{res.asset[0].nama_kendaraan}</Text>
-            </View>
-            <View style={styles.tableCol}>
-            <Text>{res.bbm}</Text>
-            </View>
-          </View>
+                <View key={res.nama} style={styles.tableRow}>
+                  <View style={styles.tableCol}>
+                    <Text>{res.peminjam[0].username}</Text>
+                  </View>
+                  <View
+                    style={{
+                      width: "16.66%",
+                      borderStyle: "solid",
+                      borderWidth: 1,
+                      borderLeftWidth: 0,
+                      borderTopWidth: 0,
+                      padding: 5,
+                      flexWrap: "nowrap",
+                    }}
+                  >
+                    <Text style={{ flexWrap: "nowrap", fontSize: 10 }}>
+                      PT: {res.permintaan[0].waktu_tanggal}
+                    </Text>
+                    <Text style={{ flexWrap: "nowrap", fontSize: 10 }}>
+                      PJ: {res.permintaan[0].waktu_jam}
+                    </Text>
+                    <Text style={{ flexWrap: "nowrap", fontSize: 10 }}>
+                      KT: {res.waktu_tanggal_kembali}
+                    </Text>
+                    <Text style={{ flexWrap: "nowrap", fontSize: 10 }}>
+                      KJ: {res.jam_kembali}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      width: "16.66%",
+                      borderStyle: "solid",
+                      borderWidth: 1,
+                      borderLeftWidth: 0,
+                      borderTopWidth: 0,
+                      fontSize: 10,
+                      padding: 5,
+                    }}
+                  >
+                    <Text> {res.permintaan[0].keperluan}</Text>
+                  </View>
+                  <View style={styles.tableCol}>
+                    <Text>{res.pengemudi[0].username}</Text>
+                  </View>
+                  <View style={styles.tableCol}>
+                    <Text>{res.asset[0].nama_kendaraan}</Text>
+                  </View>
+                  <View style={styles.tableCol}>
+                    <Text>
+                      {parseInt(res.bbm).toLocaleString("id-ID", {
+                        style: "currency",
+                        currency: "IDR",
+                      })}
+                    </Text>
+                  </View>
+                </View>
               </>
-            )
+            );
           })}
-      
-       
         </View>
         <Text
           style={styles.pageNumber}
@@ -182,24 +194,23 @@ const MyDocument = ({ data }) => (
   </Document>
 );
 
-export const Exportpdf =   () => {
+export const Exportpdf = () => {
   const data = JSON.parse(localStorage.getItem("exportData"));
-// useEffect(() => {
-//   return () => {
-//     localStorage.removeItem("exportData");
-//   };
-// }, []);
-// if (data) {
+  // useEffect(() => {
+  //   return () => {
+  //     localStorage.removeItem("exportData");
+  //   };
+  // }, []);
+  // if (data) {
   return (
     <PDFViewer style={{ width: "100vw", height: "100vh" }}>
       <MyDocument data={data} />
     </PDFViewer>
-  );    
-// }else{
-//   return (
-//     <div>No data fetch</div>
-//       );
-    
-// }
+  );
+  // }else{
+  //   return (
+  //     <div>No data fetch</div>
+  //       );
 
+  // }
 };

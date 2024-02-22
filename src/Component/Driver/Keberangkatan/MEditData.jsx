@@ -8,10 +8,8 @@ export const MEditData = ({ data, setcloseStatus }) => {
   const [pengemudiID, setpengemudiID] = useState([]);
   const handleNextForm = () => setNextForm(!NextForm);
   const status = ["perjalanan", "persiapan", "selesai"];
- const handletest = (e)=>{
-  console.log(e)
- }
-  const [formData, setformData] = useState({
+ 
+  const [form, setform] = useState({
     _pengemudiID: null,
     _assetID: null,
     _requestID: null,
@@ -25,18 +23,25 @@ export const MEditData = ({ data, setcloseStatus }) => {
     jam_kembali: null,
     waktu_tanggal_kembali: null,
     bbm: null,
+    strukPath:null
   });
   useEffect(() => {
     axios
-      .get(`http://localhost:8080/driver/aset/siap`)
+      .get(`http://localhost:8080/admin/asset/siap`)
       .then((res) => {
         const oV = res.data.data;
         setassetID(oV);
       })
       .catch((err) => {});
-
+    axios
+      .get(`http://localhost:8080/admin/user/pengemudi`)
+      .then((res) => {
+        const oV = res.data.data;
+        setpengemudiID(oV);
+      })
+      .catch((err) => {});
    
-      setformData({...formData,
+      setform({...form,
         _pengemudiID: data._pengemudiID,
         _assetID: data._assetID,
         _requestID: data._requestID,
@@ -48,22 +53,42 @@ export const MEditData = ({ data, setcloseStatus }) => {
         km_kembali: data.sesi_kondisi_kembali.km,
         status_sesi: data.status_sesi,
         jam_kembali: data.jam_kembali,
+        strukPath:data.strukPath,
         waktu_tanggal_kembali: data.waktu_tanggal_kembali,
         bbm: data.bbm})
       
   }, []);
   const formPost = (e) => {
-    // e.preventDefault()
-   
+    e.preventDefault();
+  
+    const formData = new FormData();
+    if (form.strukPath) {
+      formData.append('strukPath', form.strukPath[0]);
+    }
+    formData.append('_pengemudiID', form._pengemudiID);
+    formData.append('_assetID', form._assetID);
+    formData.append('_requestID', form._requestID);
+    formData.append('kondisi_pergi', form.kondisi_pergi);
+    formData.append('kendala_pergi', form.kendala_pergi);
+    formData.append('kondisi_kembali', form.kondisi_kembali);
+    formData.append('kendala_kembali', form.kendala_kembali);
+    formData.append('km_pergi', form.km_pergi);
+    formData.append('km_kembali', form.km_kembali );
+    formData.append('status_sesi', form.status_sesi );
+    formData.append('jam_kembali', form.jam_kembali );
+    formData.append('waktu_tanggal_kembali', form.waktu_tanggal_kembali);
+    formData.append('bbm', form.bbm)
+
     axios.put(
       `http://localhost:8080/driver/sesiguna/edit/${data._id}`,
       formData
     ).then((res)=>{
-      alert("Berhasil update data")
+      alert("Berhasil menambah informasi")
     }).catch((res)=>{
       console.log(res)
     })
   };
+  
  
   return (
     <div
@@ -74,7 +99,7 @@ export const MEditData = ({ data, setcloseStatus }) => {
         <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
           <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Edit Data
+              Ubah informasi
             </h3>
             <button
               onClick={setcloseStatus}
@@ -100,7 +125,7 @@ export const MEditData = ({ data, setcloseStatus }) => {
               <span className="sr-only">Close modal</span>
             </button>
           </div>
-          <form  onSubmit={formPost} className="p-4 md:p-5">
+          <form  encType="multipart/form-data"  onSubmit={formPost} className="p-4 md:p-5">
             {!NextForm && (
               <>
                 <div className="grid gap-4 mb-4 grid-cols-2">
@@ -116,15 +141,15 @@ export const MEditData = ({ data, setcloseStatus }) => {
                     <input
                       onChange={(e) => {
                         if (e.target.checked) {
-                          setformData({
-                            ...formData,
+                          setform({
+                            ...form,
                             kondisi_pergi: "baik",
                           });
                         }
                       }}
                       name="kondisi_pergi_baik"
                       type="checkbox"
-                      checked={formData.kondisi_pergi === "baik"}
+                      checked={form.kondisi_pergi === "baik"}
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-[25px] h-[25px] p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                     />
 
@@ -137,15 +162,15 @@ export const MEditData = ({ data, setcloseStatus }) => {
                     <input
                       onChange={(e) => {
                         if (e.target.checked) {
-                          setformData({
-                            ...formData,
+                          setform({
+                            ...form,
                             kondisi_pergi: "tidak",
                           });
                         }
                       }}
                       name="kondisi_pergi_tidak"
                       type="checkbox"
-                      checked={formData.kondisi_pergi === "tidak"}
+                      checked={form.kondisi_pergi === "tidak"}
                       className="bg-gray-50 border ml-3 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-[25px] h-[25px] p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                     />
 
@@ -166,7 +191,7 @@ export const MEditData = ({ data, setcloseStatus }) => {
                     <input
                       type="number"
                       onChange={(e) =>{
-                        setformData({ ...formData, km_pergi: e.target.value })
+                        setform({ ...form, km_pergi: e.target.value })
                       
                       }}
                       value={
@@ -178,7 +203,7 @@ export const MEditData = ({ data, setcloseStatus }) => {
                       placeholder="Angka pada kilometer"
                     />
                   </div>
-                  {formData.kondisi_pergi === "tidak" && (
+                  {form.kondisi_pergi === "tidak" && (
                     <div className="col-span-2">
                       <label
                         for="name"
@@ -188,8 +213,8 @@ export const MEditData = ({ data, setcloseStatus }) => {
                       </label>
                       <textarea
                         onChange={(e) =>
-                          setformData({
-                            ...formData,
+                          setform({
+                            ...form,
                             kendala_pergi: e.target.value,
                           })
                         }
@@ -218,14 +243,14 @@ export const MEditData = ({ data, setcloseStatus }) => {
                     <input
                      onChange={(e) => {
                       if (e.target.checked) {
-                      setformData({
-                        ...formData,
+                      setform({
+                        ...form,
                         kondisi_kembali:"baik"
                           } );
                     }}}
                     name="kondisi_kembali_baik"
                       type="checkbox"
-                      checked={formData.kondisi_kembali === "baik"}
+                      checked={form.kondisi_kembali === "baik"}
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-[25px] h-[25px] p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                     />
 
@@ -238,14 +263,14 @@ export const MEditData = ({ data, setcloseStatus }) => {
                     <input
                       onChange={(e) => {
                         if (e.target.checked) {
-                        setformData({
-                          ...formData,
+                        setform({
+                          ...form,
                           kondisi_kembali:"tidak"
                             } );
                       }}}
                       name="kondisi_kembali_tidak"
                       type="checkbox"
-                      checked={formData.kondisi_kembali === "tidak"}
+                      checked={form.kondisi_kembali === "tidak"}
                       className="bg-gray-50 border ml-3 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-[25px] h-[25px] p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                     />
 
@@ -265,7 +290,7 @@ export const MEditData = ({ data, setcloseStatus }) => {
                     </label>
                     <input
                       onChange={(e) =>
-                        setformData({ ...formData, km_kembali: e.target.value })
+                        setform({ ...form, km_kembali: e.target.value })
                       }
                       value={
                         data.sesi_kondisi_kembali.km &&
@@ -277,7 +302,7 @@ export const MEditData = ({ data, setcloseStatus }) => {
                       placeholder="Angka pada kilometer"
                     />
                   </div>
-                  {formData.kondisi_kembali === "tidak" && (
+                  {form.kondisi_kembali === "tidak" && (
                     <div className="col-span-2">
                       <label
                         for="name"
@@ -287,8 +312,8 @@ export const MEditData = ({ data, setcloseStatus }) => {
                       </label>
                       <textarea
                         onChange={(e) =>
-                          setformData({
-                            ...formData,
+                          setform({
+                            ...form,
                             kendala_kembali: e.target.value,
                           })
                         }
@@ -327,8 +352,32 @@ export const MEditData = ({ data, setcloseStatus }) => {
             {NextForm && (
               <>
                 <div className="grid gap-4 mb-4 grid-cols-2">
-            
-                  <div className="col-span-2">
+                  <div className="col-span-1">
+                    <label
+                      for="name"
+                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      Pengemudi
+                    </label>
+                    <select
+                      onChange={(e) =>
+                        setform({
+                          ...form,
+                          _pengemudiID: e.target.value,
+                        })
+                      }
+                    name="_pengemudiID"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                    >
+                      <option selected value={data.pengemudi_data[0] && data.pengemudi_data[0]._id}>
+                        {data.pengemudi_data[0]?data.pengemudi_data[0].username:"Pilih driver"}
+                      </option>
+                      {pengemudiID.map((res) => {
+                        return <option value={res._id}>{res.username}</option>;
+                      })}
+                    </select>
+                  </div>
+                  <div className="col-span-1">
                     <label
                       for="name"
                       className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -338,7 +387,7 @@ export const MEditData = ({ data, setcloseStatus }) => {
                     <select
                       onChange={(e) =>{
                         console.log(e.target.value)
-                        setformData({ ...formData, _assetID: e.target.value })
+                        setform({ ...form, _assetID: e.target.value })
                       }}
                       name="_assetID"
                       id="category"
@@ -364,8 +413,8 @@ export const MEditData = ({ data, setcloseStatus }) => {
                     <input
                       onChange={(e) => {
                      
-                        setformData({
-                          ...formData,
+                        setform({
+                          ...form,
                           jam_kembali: e.target.value,
                         });
                       }}
@@ -385,8 +434,8 @@ export const MEditData = ({ data, setcloseStatus }) => {
                     <input
                       onChange={(e) =>{
                      
-                        setformData({
-                          ...formData,
+                        setform({
+                          ...form,
                           waktu_tanggal_kembali: e.target.value,
                         })
                       }}
@@ -406,11 +455,30 @@ export const MEditData = ({ data, setcloseStatus }) => {
                     </label>
                     <input
                       onChange={(e) => {
-                        setformData({ ...formData, bbm: e.target.value });
+                        setform({ ...form, bbm: e.target.value });
                       }}
                       name="bbm"
-                      defaultValue={data.bbm && parseInt(data.bbm)}
+                       defaultValue={data.bbm && parseInt(data.bbm)}
                       type="number"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                      placeholder="Total biaya bbm "
+                    />
+                  </div>
+                  <div className="col-span-2  ">
+                    <label
+                      for="category"
+                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      Struk pembelian bbm
+                    </label>
+                    <input
+                      onChange={(e) => {
+                        setform({ ...form, strukPath: [e.target.files[0]] });
+                      }}
+                      name="strukPath"
+                      //  defaultValue={data.strukPath && data.strukPath }
+                      accept=".jpg, .jpeg, .png"
+                      type="file"
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                       placeholder="Total biaya bbm "
                     />
@@ -424,8 +492,8 @@ export const MEditData = ({ data, setcloseStatus }) => {
                     </label>
                     <select
                       onChange={(e) =>
-                        setformData({
-                          ...formData,
+                        setform({
+                          ...form,
                           status_sesi: e.target.value,
                         })
                       }

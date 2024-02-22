@@ -147,6 +147,9 @@ export const Main = ({ children }) => {
             <div className="flex justify-between">
               <div className="w-[350px] h-max flex">
                 <input
+                onChange={(e)=>{
+                  console.log(e.target.value)
+                }}
                   placeholder="Cari data"
                   className=" text-[23px] placeholder:text-[23px] w-full h-[51px] rounded-xl border-0 pr-[60px] bg-[#D9D9D9] placeholder:font-[poppins]"
                   type="search"

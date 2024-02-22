@@ -3,6 +3,7 @@ import { MInfo } from "../MInfo";
 import axios from "axios";
 import { MHapus } from "./MHapus";
 import { MEditUser } from "./MEditUser";
+import { useSelector } from "react-redux";
 
 export const DataTable = () => {
   const [hapususer, sethapususer] = useState(false);
@@ -11,7 +12,17 @@ export const DataTable = () => {
 
   const [actiontb, setActionTable] = useState([]);
   const [data, setdata] = useState([]);
-
+  const {PunchSearch} = useSelector((state)=>state.punchh)
+  const searchGet = async()=>{
+  await  axios
+    .post(`http://localhost:8080/admin/user/search`,{keyword:PunchSearch})
+    .then((res) => {
+      setdata(res.data.data);
+      console.log(res.data.data)
+    })
+    .catch((res) => {});
+      
+  }
   useEffect(() => {
     axios
       .get(`http://localhost:8080/admin/user`)
@@ -19,7 +30,10 @@ export const DataTable = () => {
         setdata(res.data.data);
       })
       .catch((res) => {});
-  }, []);
+      return ()=>{
+      searchGet()
+      }
+  }, [PunchSearch]);
 
   const toggleAction = (id) => {
     setActionTable((prevStatus) => {

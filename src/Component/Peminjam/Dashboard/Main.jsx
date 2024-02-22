@@ -7,6 +7,7 @@ export const Main = ({ children }) => {
   const [dashboardData, setDashboard] = useState([]);
   const [Herror, setHerror] = useState(false);
   const [getList, setgetList] = useState(false);
+  const [getDaftar, setDaftar] = useState([]);
   const [datadate, setdatadate] = useState("1");
 
   const getData = async (tahun = 0, bulan = 0) => {
@@ -22,7 +23,12 @@ export const Main = ({ children }) => {
   };
   const getTopList = async () => {
     await axios.get("http://localhost:8080/peminjam/dashboard").then((res) => {
-      setgetList(res.data.data);
+    setgetList(res.data.data[0]);
+    });
+  }; 
+   const getDaftarPeminjaman = async () => {
+    await axios.get("http://localhost:8080/peminjam/dashboard").then((res) => {
+    setgetList(res.data.data[0]);
     });
   };
   const handleDatedata = (id) => {
@@ -32,6 +38,7 @@ export const Main = ({ children }) => {
     const fetchData = async () => {
       await getData();
       await getTopList();
+      await getDaftarPeminjaman();
     };
 
     fetchData();

@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { MUser } from "./MUser";
+import { setPunchSearch } from "../../App/Store/PunchData";
+import { useDispatch } from "react-redux";
 
 export const Main = ({ children }) => {
   const [moreTotalitas, setmoreTotalitas] = useState(false);
   const [moreLainnya, setmoreLainnya] = useState(false);
   const [TambahData, setTambahData] = useState(false);
+  const dispatch = useDispatch()
   const handleTambahData = () =>setTambahData(!TambahData)
   const handleMoreTotalitas = () => setmoreTotalitas(!moreTotalitas);
   const handleMoreLainnya = () => setmoreLainnya(!moreLainnya);
@@ -22,6 +25,9 @@ export const Main = ({ children }) => {
             <div className="flex justify-between">
               <div className="w-[350px] h-max flex">
                 <input
+                onChange={(e)=>{
+                  dispatch(setPunchSearch(e.target.value))
+                }}
                   placeholder="Cari data"
                   className=" text-[23px] placeholder:text-[23px] w-full h-[51px] rounded-xl border-0 pr-[60px] bg-[#D9D9D9] placeholder:font-[poppins]"
                   type="search"

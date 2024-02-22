@@ -4,7 +4,7 @@ import { LayoutHome } from "../Layout/LayoutHome";
  
 import { Main } from "../Component/Peminjam/Dashboard/Main";
  
-import { CardPieEmpty } from "../Component/Dashboard/CardPieEmpty";
+import { CardPieEmpty } from "../Component/Peminjam/Dashboard/CardPieEmpty";
 import { PeminjamSidebar } from "../Component/Peminjam.Sidebar";
 
 export const PeminjamDashboard = () => {

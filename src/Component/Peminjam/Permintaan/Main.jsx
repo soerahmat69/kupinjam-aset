@@ -3,7 +3,7 @@ import { MPermintaan } from "./MPermintaan";
 import axios from "axios";
 
 import { useDispatch, useSelector } from "react-redux";
-import { setPunchStatus } from "../../../App/Store/PunchData";
+import { setPunchStatus,setPunchStatusSub } from "../../../App/Store/PunchData";
 
 export const Main = ({ children }) => {
   const [moreTotalitas, setmoreTotalitas] = useState(false);
@@ -14,7 +14,7 @@ export const Main = ({ children }) => {
   const handleMoreLainnya = () => setmoreLainnya(!moreLainnya);
   const [dataTotalitas, setTotalitas] = useState([]);
   const [dataPeminjam, setToppeminjam] = useState([]);
-  const Prop = ["Permintaan", "Disetujui", "Dipending"];
+  const Prop = ["Permintaan", "Disetujui", "Diproses"];
   const { PunchStatus } = useSelector((state) => state.punchh);
   const dispatch = useDispatch()
 
@@ -166,13 +166,19 @@ export const Main = ({ children }) => {
                   >
                     <ul className="divide-y divide-[#252B4880]">
                       <li
-                      onClick={()=>dispatch(setPunchStatus(!PunchStatus))}
+                      onClick={()=>dispatch(setPunchStatusSub("DEFAULT"))}
+                        href="#"
+                        className=" block px-4 py-2 text-[13px] text-gray-700 hover:bg-gray-100"
+                      >
+                        Data Default
+                      </li>
+                      <li
+                      onClick={()=>dispatch(setPunchStatusSub("DISETUJUI"))}
                         href="#"
                         className=" block px-4 py-2 text-[13px] text-gray-700 hover:bg-gray-100"
                       >
                         Data Disetujui
                       </li>
-                   
                      
                     </ul>
                     {/* </div> */}

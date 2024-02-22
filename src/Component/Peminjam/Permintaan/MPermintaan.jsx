@@ -24,7 +24,7 @@ export const MPermintaan = ({ setcloseStatus }) => {
     axios
     .post(`http://localhost:8080/peminjam/pinjam/add`,formData)
     .catch((err) => {
-      alert("pinjaman hanya boleh 1 pinjaman")
+      console.log(err)
     });  
     }
   }
@@ -76,13 +76,17 @@ export const MPermintaan = ({ setcloseStatus }) => {
                   Jam Berangkat
                 </label>
                 <input
-                  onChange={(e)=>{
-                    const selectedTime = e.target.value;
-                    const minTime = '08:00'; 
-                    if (selectedTime >= minTime) {
-                      setformData({ ...formData, waktu_jam: selectedTime });
-                    }}
-                  }
+               onChange={(e)=>{
+                const selectedTime = e.target.value;
+                const minTime = '08:00'; 
+                if (selectedTime >= minTime) {
+                  setformData({ ...formData, waktu_jam: selectedTime });
+                }else{
+                  alert("Jam di luar jam kerja")
+                  e.target.value = ""
+                }
+              }
+              }
                   type="time"
                   className=" bg-gray-50 border  border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   required
@@ -97,14 +101,21 @@ export const MPermintaan = ({ setcloseStatus }) => {
                   Tanggal Berangkat
                 </label>
                 <input
-                 onChange={(e)=>{
-                const selectedDate = new Date(e.target.value);
-                const currentDate = new Date();
-                if (selectedDate > currentDate) {
-                  setformData({...formData,waktu_tanggal:e.target.value})
-                } 
-                }
+             onChange={(e) => {
+              const selectedDate = new Date(e.target.value);
+              const currentDate = new Date();
+              const tomorrowDate = new Date(currentDate);
+              tomorrowDate.setDate(currentDate.getDate() - 1); // Menambahkan satu hari ke tanggal hari ini
+              
+              if (selectedDate >= tomorrowDate) {
+                setformData({...formData,waktu_tanggal:e.target.value})
+                // alert("Tanggal oke");
+              } else {
+                alert("Maaf, tanggal yang Anda pilih adalah tanggal di masa lalu atau hari ini.");
+                e.target.value = ""; // Mengosongkan input jika tanggal yang dipilih tidak sesuai
               }
+            }}
+            
                   type="date"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                  required
@@ -118,8 +129,16 @@ export const MPermintaan = ({ setcloseStatus }) => {
                   Waktu peminjaman
                 </label>
                 <input
-                 onChange={(e)=>{setformData({...formData,waktu_pinjam:e.target.value})}}
-                  id="description"
+                 onChange={(e)=>{
+                  if(e.target.value <= 10){
+                  setformData({...formData,waktu_pinjam:e.target.value})
+                
+                  }else{
+                    alert("Waktu kurang dari 10 hari")
+                    e.target.value= ""
+                  }
+                }}
+                 
                   
                   required
                   type="number"

@@ -19,13 +19,13 @@ export const MUser = ({ setcloseStatus }) => {
       .catch((res) => {});
   }, []);
   const handleSubmit = (e) => {
-    e.preventDefault();
+    // e.preventDefault();
 
     axios
       .post(`http://localhost:8080/admin/user/add`, data)
       .then((res) => {
  
-        alert(res.data.data.message)
+        alert("berhasil menambah user")
       })
       .catch((err) => {
         // alert(err.data.data[0].message)

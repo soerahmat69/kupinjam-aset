@@ -42,14 +42,14 @@ export const MEditPermintaan = ({data, setcloseStatus }) => {
         <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
           <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Tambah Permintaan
+              Ubah Permintaan
             </h3>
             <button
               onClick={setcloseStatus}
               type="button"
               className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
               data-modal-toggle="crud-modal"
-            >
+            > 
               <svg
                 className="w-3 h-3"
                 aria-hidden="true"
@@ -150,9 +150,9 @@ export const MEditPermintaan = ({data, setcloseStatus }) => {
                 onChange={(e)=>{setformData({...formData,status:e.target.value})}}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
-                  <option selected={formData.status === "setuju"?true:false}  value="default"   >setuju</option>
-                  <option  selected={formData.status === "batal"?true:false}  value="default"   >batal</option>
-                  <option  selected={formData.status === "pending"?true:false}   value="default"   >pending</option>
+                  <option selected={formData.status === "setuju"?true:false}  value="setuju"  >setuju</option>
+                  <option  selected={formData.status === "batal"?true:false}   value="batal" >batal</option>
+                  <option  selected={formData.status === "proses"?true:false} value="proses"      >proses</option>
                   
                 </select>
               </div>

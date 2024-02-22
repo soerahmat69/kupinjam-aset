@@ -61,8 +61,14 @@ export const FormLogin = () => {
         </button>
       </div>
       <div className="text-center mt-[20px] md:mt-[40px]">
-       
-      </div>
+          <h2 className="font-[poppins]  text-[17px]">
+            Kamu belum punya akun ?,{" "}
+            <a target="blank" href="https://api.whatsapp.com/send?phone=628123456789&text=Halo%20min,%20saya%20ingin%20buat%20akun%20kupinjam%20
+"  className="underline ">
+              registrasi ke admin
+            </a>
+          </h2>
+        </div>
     </form>
   );
 };

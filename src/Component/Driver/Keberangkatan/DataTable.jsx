@@ -7,11 +7,13 @@ import moment from "moment";
 import { useDispatch, useSelector } from "react-redux";
 import { reset, setPunchStatus } from "../../../App/Store/PunchData";
 import { MTolak } from "./MTolak";
+import { MStruk } from "./MStruk";
 export const DataTable = ({ data }) => {
   const [moreTable, setmoreTable] = useState(false);
   const [EditModal, setEditModal] = useState([]);
   const [KetPergi, setKetPergi] = useState([]);
   const [KetKembali, setKetKembali] = useState([]);
+  const [ketstruk, setketstruk] = useState([]);
   const [Tolak, setTolak] = useState([]);
   const [EditClick, setEditCLick] = useState([]);
   const [Datatd, setData] = useState([]);
@@ -60,6 +62,16 @@ export const DataTable = ({ data }) => {
   };
   const toggleKetKembali = (id) => {
     setKetKembali((prevStatus) => {
+      const newStatus = { ...prevStatus };
+      Object.keys(newStatus).forEach((key) => {
+        newStatus[key] = false;
+      });
+      newStatus[id] = !prevStatus[id];
+      return newStatus;
+    });
+  };
+  const handleStruk = (id) => {
+    setketstruk((prevStatus) => {
       const newStatus = { ...prevStatus };
       Object.keys(newStatus).forEach((key) => {
         newStatus[key] = false;
@@ -118,6 +130,10 @@ export const DataTable = ({ data }) => {
           .catch((error) => {
             console.log(error);
           });
+      })
+      .catch((res) => {
+        // alert(res.data.data[0].message)
+        alert(res.response.data.message);
       });
   };
   return (
@@ -142,7 +158,16 @@ export const DataTable = ({ data }) => {
                   {EditModal[res._id] && (
                     <MEditData
                       data={res}
+                      
                       setcloseStatus={() => HandleEditModal(res._id)}
+                    />
+                  )}
+                   {ketstruk[res._id] && (
+                    <MStruk
+                    sourceImage={res.strukPath}
+                      data={res}
+                      title={"Struk BBM"}
+                      setcloseStatus={() => handleStruk(res._id)}
                     />
                   )}
                   {KetPergi[res._id] && (
@@ -169,7 +194,13 @@ export const DataTable = ({ data }) => {
                       kendala={res.sesi_kondisi_pergi.kendala}
                       setcloseStatus={() => toggleKetKembali(res._id)}
                     />
-                  )}{Tolak[res._id] && <MTolak id={res._id} setcloseStatus={()=>HandleTolakModal(res._id)} />}
+                  )}
+                  {Tolak[res._id] && (
+                    <MTolak
+                      id={res._id}
+                      setcloseStatus={() => HandleTolakModal(res._id)}
+                    />
+                  )}
                   {KetLainnya[res._id] && (
                     <MKetLain
                       jabatan={res.peminjam_role.role}
@@ -208,7 +239,6 @@ export const DataTable = ({ data }) => {
                         </span>
                       </div>
                     </td>
-             
 
                     <td
                       onClick={() => toggleKetPergi(res._id)}
@@ -229,23 +259,38 @@ export const DataTable = ({ data }) => {
                       className="py-[17px] cursor-pointer"
                     >
                       <p>
-                        {res.jam_kembali ? res.jam_kembali +" - "+ moment(res.waktu_tanggal_kembali).format(
+                        {res.jam_kembali
+                          ? res.jam_kembali +
+                            " - " +
+                            moment(res.waktu_tanggal_kembali).format(
                               "DD/MM/YYYY"
-                            ): "belum ada"}
-                     
+                            )
+                          : "belum ada"}
                       </p>
                       <p className=" underline underline-offset-4">
                         Lihat Kondisi
                       </p>
                     </td>
-                    <td className="py-[17px]">
-                      {" "}
+                    <td onClick={() => handleStruk(res._id)} className="py-[17px]">
+                     
+                    <p >
                       {res.bbm !== null
                         ? parseInt(res.bbm).toLocaleString("id-ID", {
                             style: "currency",
                             currency: "IDR",
                           })
                         : "belum ada"}
+                      </p>
+                      {res.bbm !== null
+                        ?  
+                        <>
+                         <p className=" cursor-pointer underline underline-offset-4">
+                        Lihat Struk
+                      </p>
+                       
+                        </>
+                        : ""}
+                       
                     </td>
                     <td
                       onClick={() => toggleKetLainnya(res._id)}
@@ -256,7 +301,7 @@ export const DataTable = ({ data }) => {
                     <td className="py-[17px]">{res.status_sesi}</td>
                     <td className="py-[17px] ">
                       <svg
-                          onClick={() => toggleAction(res._id)}
+                        onClick={() => toggleAction(res._id)}
                         className="cursor-pointer"
                         width="25"
                         height="5"
@@ -275,134 +320,132 @@ export const DataTable = ({ data }) => {
                             !EditClick[res._id] && "hidden"
                           }  top-[10px]  z-10 absolute overflow-hidden w-[100px] rounded-md shadow-lg bg-[#F0F0F0] ring-1 ring-[#252B4880] `}
                         >
-                          {res.status_sesi ==="perjalanan"?(
-                          <>
-                            <ul className="divide-y divide-[#252B4880]">
-                          <li
-                                // onClick={() => toggleLanjut(res._id)}
-                                onClick={()=>HandleEditModal(res._id)}
-                                href="#"
-                                className=" cursor-pointer  flex   gap-[5px] px-4 py-[6px]   text-[13px] text-gray-700 hover:bg-gray-100"
-                              >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="16"
-                                  height="16"
-                                  viewBox="0 0 16 16"
-                                  fill="none"
-                                >
-                                  <path
-                                    fill-rule="evenodd"
-                                    clip-rule="evenodd"
-                                    d="M11.2798 1H4.71946C2.4333 1 1 2.6187 1 4.90941V11.0906C1 13.3813 2.42649 15 4.71946 15H11.279C13.5728 15 15 13.3813 15 11.0906V4.90941C15 2.6187 13.5728 1 11.2798 1Z"
-                                    stroke="#252B48"
-                                    stroke-width="1.5"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                  />
-                                  <path
-                                    d="M5.30493 7.99989L7.10147 9.79567L10.693 6.2041"
-                                    stroke="#252B48"
-                                    stroke-width="1.5"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                  />
-                                </svg>
-                                Informasi
-                              </li>
-                           
-                          </ul>
-                          </>
-                          ):(
+                          {res.status_sesi === "perjalanan" ? (
                             <>
-                             <ul className="divide-y divide-[#252B4880]">
-                          <li
-                                onClick={() => SelectPerjalanan(res._id)}
-                                // onClick={()=>HandleEditModal(res._id)}
-                                href="#"
-                                className=" cursor-pointer  flex   gap-[5px] px-4 py-[6px]   text-[13px] text-gray-700 hover:bg-gray-100"
-                              >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="16"
-                                  height="16"
-                                  viewBox="0 0 16 16"
-                                  fill="none"
+                              <ul className="divide-y divide-[#252B4880]">
+                                <li
+                                  // onClick={() => toggleLanjut(res._id)}
+                                  onClick={() => HandleEditModal(res._id)}
+                                  href="#"
+                                  className=" cursor-pointer  flex   gap-[5px] px-4 py-[6px]   text-[13px] text-gray-700 hover:bg-gray-100"
                                 >
-                                  <path
-                                    fill-rule="evenodd"
-                                    clip-rule="evenodd"
-                                    d="M11.2798 1H4.71946C2.4333 1 1 2.6187 1 4.90941V11.0906C1 13.3813 2.42649 15 4.71946 15H11.279C13.5728 15 15 13.3813 15 11.0906V4.90941C15 2.6187 13.5728 1 11.2798 1Z"
-                                    stroke="#252B48"
-                                    stroke-width="1.5"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                  />
-                                  <path
-                                    d="M5.30493 7.99989L7.10147 9.79567L10.693 6.2041"
-                                    stroke="#252B48"
-                                    stroke-width="1.5"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                  />
-                                </svg>
-                                Lanjut
-                              </li>
-                            <li
-                              onClick={() => HandleTolakModal(res._id)}
-                              href="#"
-                              className=" cursor-pointer flex   gap-[5px] px-4 py-[6px]   text-[13px] text-gray-700 hover:bg-gray-100"
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                viewBox="0 0 16 16"
-                                fill="none"
-                              >
-                                <path
-                                  d="M9.81254 6.17969L6.18616 9.80607"
-                                  stroke="#252B48"
-                                  stroke-width="1.13514"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                />
-                                <path
-                                  d="M9.81349 9.80838L6.18408 6.17822"
-                                  stroke="#252B48"
-                                  stroke-width="1.13514"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                />
-                                <path
-                                  fill-rule="evenodd"
-                                  clip-rule="evenodd"
-                                  d="M11.2798 1H4.71946C2.4333 1 1 2.6187 1 4.90941V11.0906C1 13.3813 2.42649 15 4.71946 15H11.279C13.5728 15 15 13.3813 15 11.0906V4.90941C15 2.6187 13.5728 1 11.2798 1Z"
-                                  stroke="#252B48"
-                                  stroke-width="1.13514"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                />
-                              </svg>
-                              Tolak
-                            </li>
-                          </ul>
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 16 16"
+                                    fill="none"
+                                  >
+                                    <path
+                                      fill-rule="evenodd"
+                                      clip-rule="evenodd"
+                                      d="M11.2798 1H4.71946C2.4333 1 1 2.6187 1 4.90941V11.0906C1 13.3813 2.42649 15 4.71946 15H11.279C13.5728 15 15 13.3813 15 11.0906V4.90941C15 2.6187 13.5728 1 11.2798 1Z"
+                                      stroke="#252B48"
+                                      stroke-width="1.5"
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                    />
+                                    <path
+                                      d="M5.30493 7.99989L7.10147 9.79567L10.693 6.2041"
+                                      stroke="#252B48"
+                                      stroke-width="1.5"
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                    />
+                                  </svg>
+                                  Informasi
+                                </li>
+                              </ul>
+                            </>
+                          ) : (
+                            <>
+                              <ul className="divide-y divide-[#252B4880]">
+                                <li
+                                  onClick={() => SelectPerjalanan(res._id)}
+                                  // onClick={()=>HandleEditModal(res._id)}
+                                  href="#"
+                                  className=" cursor-pointer  flex   gap-[5px] px-4 py-[6px]   text-[13px] text-gray-700 hover:bg-gray-100"
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 16 16"
+                                    fill="none"
+                                  >
+                                    <path
+                                      fill-rule="evenodd"
+                                      clip-rule="evenodd"
+                                      d="M11.2798 1H4.71946C2.4333 1 1 2.6187 1 4.90941V11.0906C1 13.3813 2.42649 15 4.71946 15H11.279C13.5728 15 15 13.3813 15 11.0906V4.90941C15 2.6187 13.5728 1 11.2798 1Z"
+                                      stroke="#252B48"
+                                      stroke-width="1.5"
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                    />
+                                    <path
+                                      d="M5.30493 7.99989L7.10147 9.79567L10.693 6.2041"
+                                      stroke="#252B48"
+                                      stroke-width="1.5"
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                    />
+                                  </svg>
+                                  Lanjut
+                                </li>
+                                <li
+                                  onClick={() => HandleTolakModal(res._id)}
+                                  href="#"
+                                  className=" cursor-pointer flex   gap-[5px] px-4 py-[6px]   text-[13px] text-gray-700 hover:bg-gray-100"
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 16 16"
+                                    fill="none"
+                                  >
+                                    <path
+                                      d="M9.81254 6.17969L6.18616 9.80607"
+                                      stroke="#252B48"
+                                      stroke-width="1.13514"
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                    />
+                                    <path
+                                      d="M9.81349 9.80838L6.18408 6.17822"
+                                      stroke="#252B48"
+                                      stroke-width="1.13514"
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                    />
+                                    <path
+                                      fill-rule="evenodd"
+                                      clip-rule="evenodd"
+                                      d="M11.2798 1H4.71946C2.4333 1 1 2.6187 1 4.90941V11.0906C1 13.3813 2.42649 15 4.71946 15H11.279C13.5728 15 15 13.3813 15 11.0906V4.90941C15 2.6187 13.5728 1 11.2798 1Z"
+                                      stroke="#252B48"
+                                      stroke-width="1.13514"
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                    />
+                                  </svg>
+                                  Tolak
+                                </li>
+                              </ul>
                             </>
                           )}
-                         
                         </div>
                       </div>
                     </td>
                   </tr>
                   {res.status_sesi === "perjalanan" && (
                     <tr>
-                    <td
-                      colSpan={8}
-                      className="text-center py-[17px] first-letter:uppercase"
-                    >
-                      Dalam sesi perjalanan
-                    </td>
-                  </tr>
+                      <td
+                        colSpan={8}
+                        className="text-center py-[17px] first-letter:uppercase"
+                      >
+                        Dalam sesi perjalanan
+                      </td>
+                    </tr>
                   )}
                 </>
               );

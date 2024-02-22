@@ -6,6 +6,7 @@ import axios from "axios";
 import moment from "moment";
 import { useDispatch, useSelector } from "react-redux";
 import { reset } from "../../App/Store/PunchData";
+import { MStruk } from "./MStruk";
 export const DataTable = ({ data }) => {
   const [moreTable, setmoreTable] = useState(false);
   const [EditModal, setEditModal] = useState([]);
@@ -14,6 +15,7 @@ export const DataTable = ({ data }) => {
   const [EditClick, setEditCLick] = useState([]);
   const [Datatd, setData] = useState([]);
   const [KetLainnya, setKetLainnya] = useState([]);
+  const [KetStruk, setKetStruk] = useState([]);
   const HandlemoreTable = () => setmoreTable(!moreTable);
   const { PunchStatus } = useSelector((state) => state.punchh);
   const toggleAction = (id) => {
@@ -66,6 +68,16 @@ export const DataTable = ({ data }) => {
       return newStatus;
     });
   };
+  const HandleStrukBBM= (id) => {
+    setKetStruk((prevStatus) => {
+      const newStatus = { ...prevStatus };
+      Object.keys(newStatus).forEach((key) => {
+        newStatus[key] = false;
+      });
+      newStatus[id] = !prevStatus[id];
+      return newStatus;
+    });
+  };
   const dispatch = useDispatch();
   useEffect(() => {
     if (PunchStatus) {
@@ -92,10 +104,17 @@ export const DataTable = ({ data }) => {
       })
       .catch((Res) => {});
   }, []);
+const exportSpj =  (data) => {
+
+ 
+  localStorage.setItem("exportDataSpj", JSON.stringify([data]));
+
+  return window.open("/admin/exportspj", "_blank");
+};
 
   return (
     <>
-      <table class="w-full font-[poppins] ">
+      <table class="w-full h-[150px] font-[poppins] ">
         <thead className="border-[#252B48]  border-b-2   sticky top-0 uppercase  text-[#00000080]">
           <tr className="text-[14px] ">
             <th className="text-start pb-[26px] ">Ket Kendaraan</th>
@@ -117,6 +136,14 @@ export const DataTable = ({ data }) => {
                     <MEditData
                       data={res}
                       setcloseStatus={() => HandleEditModal(res._id)}
+                    />
+                  )}
+                    {KetStruk[res._id] && (
+                    <MStruk
+                    title={"Struk BBM"}
+                    sourceImage={res.strukPath}
+                      data={res}
+                      setcloseStatus={() => HandleStrukBBM(res._id)}
                     />
                   )}
                   {KetPergi[res._id] && (
@@ -216,14 +243,26 @@ export const DataTable = ({ data }) => {
                         Lihat Kondisi
                       </p>
                     </td>
-                    <td className="py-[17px]">
-                      {" "}
+                    <td onClick={()=>HandleStrukBBM(res._id)} className="py-[17px]">
+                
+                      <p >
                       {res.bbm !== null
                         ? parseInt(res.bbm).toLocaleString("id-ID", {
                             style: "currency",
                             currency: "IDR",
                           })
                         : "belum ada"}
+                      </p>
+                      {res.bbm !== null
+                        ?  
+                        <>
+                         <p className=" cursor-pointer underline underline-offset-4">
+                        Lihat Struk
+                      </p>
+                       
+                        </>
+                        : ""}
+                       
                     </td>
                     <td
                       onClick={() => toggleKetLainnya(res._id)}
@@ -291,6 +330,14 @@ export const DataTable = ({ data }) => {
                                 />
                               </svg>
                               Edit
+                            </li>
+                            <li
+                              onClick={()=>exportSpj(res)}
+                              href="#"
+                              className="  flex items-center cursor-pointer   gap-[5px] px-4 py-[6px]   text-[13px] text-gray-700 hover:bg-gray-100"
+                            >
+                           
+                              Export spj
                             </li>
                           </ul>
                         </div>
