@@ -8,4 +8,4 @@ Kupinjam is a useful website for managing vehicle asset loans.
 - etc.
 ## Backend 
 https://github.com/soerahmat69/kupinjam-aset-backend
-### `npm start`
+### `npm run start`
